@@ -1,0 +1,44 @@
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Affichage conditionnel
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	(function ($) {
+		$.fn.PTAffichage = function (options) {
+			$.fn.PTAffichage.defaults = {
+				ValueForShow: "",
+				ValueForHide: "",
+				CibleToShowOrHide: "",
+				HideThing: function (settings) {
+					var inputs = $(settings.CibleToShowOrHide + " :input");
+					inputs.val(""); 				// Value
+					inputs.each(function () {		// Validators
+						var vals = $(this).get()[0].Validators;
+						if (vals === undefined) return;
+						for (var i = 0; i < vals.length; i++) ValidatorEnable(vals[i], false);
+					});
+					$(settings.CibleToShowOrHide).hide();
+				},
+				ShowThing: function (settings) {
+					var inputs = $(settings.CibleToShowOrHide + " :input");
+					inputs.each(function () {		// Validators
+						var vals = $(this).get()[0].Validators;
+						if (vals === undefined) return;
+						for (var i = 0; i < vals.length; i++) ValidatorEnable(vals[i], true);
+					});
+					$(settings.CibleToShowOrHide).show();
+				}
+			};
+			var settings = $.extend({}, $.fn.PTAffichage.defaults, options);
+			$(this).data("settings", settings);
+			$(this).change(function () {
+				var settings = $(this).data("settings");
+				if (settings.ValueForShow != "") {
+					if ($(this).val() == settings.ValueForShow) settings.ShowThing(settings);
+					else settings.HideThing(settings);
+				}
+				if (settings.ValueForHide != "") {
+					if ($(this).val() != settings.ValueForHide) settings.ShowThing(settings);
+					else settings.HideThing(settings);
+				}
+			});
+			$(this).change();
+		};
