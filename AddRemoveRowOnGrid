@@ -1,0 +1,41 @@
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Ajouter supperimer une ligne d'un tableau
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	(function ($) {
+		$.fn.PTGrid = function (options) {
+			var prochainNumero = 0;
+			$.fn.PTGrid.defaults = {
+				GridFctCreer: function () {
+					prochainNumero++;
+					var LastRowCreated = new Array();
+					var elt = $(settings.GridTemplate).clone(true);
+					var id_lig = $(elt).attr("id") + String(prochainNumero);
+					$(elt).attr("id", id_lig);
+					$(elt).find("input , select").each(function (index) {
+						$(this).prop("disabled", !settings.GridIsEnabled);
+						var id = $(this).attr("id");
+						if (id === undefined) id = $(this).attr("name");
+						var ident = id_lig + "__" + id
+						$(this).attr("id", ident);
+						$(this).attr("name", ident);
+						LastRowCreated[id] = $(this);
+					});
+					$(elt).find("#" + id_lig + "__" + settings.GridButtonDeleteName).click(settings.GridFctSuppr);
+					$(elt).appendTo(settings.GridResultat);
+					$(settings.GridResultat).data("LastRowCreated", LastRowCreated);
+				},
+				GridFctSuppr: function (elt) {
+					var name = "#" + elt.target.id.split("__")[0];
+					$("#" + elt.target.id.split("__")[0]).remove();
+				},
+				GridTemplate: "#modele .ligne",
+				GridResultat: "#resultat",
+				GridButtonDeleteName: "delete",
+				GridIsEnabled: true
+			};
+			var settings = $.extend({}, $.fn.PTGrid.defaults, options);
+			$(this).click(settings.GridFctCreer);
+			if (!settings.GridIsEnabled) $(this).hide();
+			return $(this);
+		};
+	} (jQuery));
